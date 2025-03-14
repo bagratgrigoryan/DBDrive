@@ -1,0 +1,2 @@
+<?php
+    echo "DRECINQ SKIZB MER PRODUCTIN";
