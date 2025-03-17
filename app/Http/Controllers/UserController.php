@@ -33,15 +33,14 @@ class UserController extends Controller
         }
     }
 
-    public function verifyUser(UserVerifiRequest $request,$id)
+    public function verifyUser(UserVerifiRequest $request)
     {
         try {
-            $conf = new ConfirmEmail();
             $user = Auth::user();
-            if ($user) {
-                if ($request->validated()) {
+            if ($user && $request->validated()) {
                     $data = $request->validated();
                     if ($user->email_verified_at === null) {
+                        $conf = new ConfirmEmail();
                         $token = md5(time() . $request->firstName . $request->lastName);
                         $data['email_verified_token'] = $token;
                         Mail::to($data['email'])->send($conf->with(['token' => $token]));
@@ -53,7 +52,6 @@ class UserController extends Controller
                         'message' => "User Created Successfully!",
                         'data' => $user
                     ]);
-                }
             } else  return response()->json([
                 "status" => false,
                 'code' => 422,
@@ -148,8 +146,9 @@ class UserController extends Controller
             if (!$user || !Hash::check($request->password, $user->password)) {
                 return response()->json(['status' => false, 'message' => 'Wrong Password'], 401);
             }
-            $token = $user->createToken('Auth')->plainTextToken;
+            $token = $user->createToken('Bearer')->plainTextToken;
             return response()->json([
+                'type' => 'Bearer',
                 'token' => $token,
             ]);
         }
@@ -159,4 +158,19 @@ class UserController extends Controller
     {
         return response()->json(Auth::user());
     }
+
+    public function logout()
+    {
+        Auth::user()->currentAccessToken()->delete();
+        return response()->json(["status" => true,"message" => "Log outed!"]);
+    }
+
+    public function deleteAccount()
+    {
+        $user = Auth::user();
+        Auth::user()->currentAccessToken()->delete();
+        User::destroy($user->id);
+        return response()->json(["status" => true,"message" => "User Deleted!"]);
+    }
+
 }

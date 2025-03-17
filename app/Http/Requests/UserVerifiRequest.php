@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class UserVerifiRequest extends FormRequest
 {
@@ -23,10 +24,11 @@ class UserVerifiRequest extends FormRequest
      */
     public function rules()
     {
+
         return [
             "firstName" => "required|min:3|max:50",
             "lastName" => "required|min:3|max:50",
-            "email" => "required|min:3|max:50|email|unique:users,email," . $this->id
+            "email" => "required|min:3|max:50|email|unique:users,email," . Auth::user()->getAuthIdentifier()
         ];
     }
 }

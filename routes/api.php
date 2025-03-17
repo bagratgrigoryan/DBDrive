@@ -21,5 +21,7 @@ Route::post("/approve-driver/{id}", [UserController::class, 'approveVerification
 Route::post("/auth", [UserController::class, 'auth']);
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/login', [UserController::class , 'login']);
-    Route::post("/verify-user/{id}", [UserController::class, 'verifyUser']);
+    Route::post("/verify-user", [UserController::class, 'verifyUser']);
+    Route::post("/logout", [UserController::class, 'logout']);
+    Route::post("/delete-account", [UserController::class, 'deleteAccount']);
 });
