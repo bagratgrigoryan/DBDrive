@@ -36,22 +36,24 @@ class UserController extends Controller
     public function verifyUser(UserVerifiRequest $request)
     {
         try {
+            $conf = new ConfirmEmail();
             $user = Auth::user();
             if ($user && $request->validated()) {
-                    $data = $request->validated();
-                    if ($user->email_verified_at === null) {
-                        $conf = new ConfirmEmail();
-                        $token = md5(time() . $request->firstName . $request->lastName);
-                        $data['email_verified_token'] = $token;
-                        Mail::to($data['email'])->send($conf->with(['token' => $token]));
-                    }
-                    $user->update($data);
+                $data = $request->validated();
+                if ($user->email_verified_at === null) {
+                    $token = md5(time() . $request->firstName . $request->lastName);
+                    $data['email_verified_token'] = $token;
+                    Mail::to($data['email'])->send($conf->with(['token' => $token]));
+                }
+                if ($user->update($data)){
                     return response()->json([
                         'status' => true,
                         'code' => 201,
                         'message' => "User Created Successfully!",
                         'data' => $user
                     ]);
+
+                }
             } else  return response()->json([
                 "status" => false,
                 'code' => 422,
@@ -162,7 +164,7 @@ class UserController extends Controller
     public function logout()
     {
         Auth::user()->currentAccessToken()->delete();
-        return response()->json(["status" => true,"message" => "Log outed!"]);
+        return response()->json(["status" => true, "message" => "Log outed!"]);
     }
 
     public function deleteAccount()
@@ -170,7 +172,25 @@ class UserController extends Controller
         $user = Auth::user();
         Auth::user()->currentAccessToken()->delete();
         User::destroy($user->id);
-        return response()->json(["status" => true,"message" => "User Deleted!"]);
+        return response()->json(["status" => true, "message" => "User Deleted!"]);
     }
 
+    public function uploadAvatar(Request $request)
+    {
+        $user = Auth::user();
+        $data = $request->all();
+        if ($request->hasFile('image')) {
+            $extension = $request->file('image')->getClientOriginalExtension();
+            $image_name = time() . $user->id . '.' . $extension;
+            try {
+                $request->file('image')->move(public_path('images/avatar'), $image_name);
+                $data['image'] = config('app.url') . "/images/avatar/" . $image_name;
+                if ($user->update($data)) {
+                    return response()->json($user);
+                }
+            } catch (\Exception $exception) {
+                return response()->json(["success" => false, "message" => $exception->getMessage()]);
+            }
+        }
+    }
 }
