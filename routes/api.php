@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use \App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +15,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::post("/create-user", [UserController::class, 'createUser']);
+Route::post("/approve-user/{id}", [UserController::class, 'approveVerificationUser']);
+Route::post("/approve-driver/{id}", [UserController::class, 'approveVerificationDriver']);
+Route::post("/auth", [UserController::class, 'auth']);
+Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::get('/login', [UserController::class , 'login']);
+    Route::post("/verify-user/{id}", [UserController::class, 'verifyUser']);
 });
