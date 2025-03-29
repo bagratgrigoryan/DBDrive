@@ -16,13 +16,15 @@ use \App\Http\Controllers\UserController;
 */
 
 Route::post("/create-user", [UserController::class, 'createUser']);
-Route::post("/approve-user/{id}", [UserController::class, 'approveVerificationUser']);
-Route::post("/approve-driver/{id}", [UserController::class, 'approveVerificationDriver']);
 Route::post("/auth", [UserController::class, 'auth']);
 Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::post("/approve-user/{id}", [UserController::class, 'approveVerificationUser']);//?
+    Route::post("/approve-driver/{id}", [UserController::class, 'approveVerificationDriver']); //?
     Route::get('/login', [UserController::class , 'login']);
     Route::post("/verify-user", [UserController::class, 'verifyUser']);
     Route::post("/logout", [UserController::class, 'logout']);
     Route::post("/delete-account", [UserController::class, 'deleteAccount']);
     Route::post("/upload-avatar", [UserController::class, 'uploadAvatar']);
+    Route::post("/update-user", [UserController::class, 'updateUser']);
+    Route::post("/change-password", [UserController::class, 'updatePassword']);
 });

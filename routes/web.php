@@ -15,3 +15,4 @@ use \App\Http\Controllers\UserController;
 */
 
 Route::get('confirm/email/{token}', [UserController::class, 'confirmEmail']);
+
