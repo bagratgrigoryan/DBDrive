@@ -24,8 +24,8 @@ class UpdatePassword extends FormRequest
     public function rules()
     {
         return [
-            "password" => "required|min:5|max:50|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/",
-            "newPassword" => "required|min:5,max:50|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/"
+            "password" => "required|min:5|max:50|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!#%*?&])[A-Za-z\d@$!#%*?&]+$/",
+            "newPassword" => "required|min:5,max:50|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!#%*?&])[A-Za-z\d@$!#%*?&]+$/"
         ];
     }
     public function messages()
